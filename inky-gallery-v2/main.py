@@ -21,8 +21,11 @@ graphics = PicoGraphics(DISPLAY)
 WIDTH, HEIGHT = graphics.get_bounds()
 graphics.set_font("bitmap8")
 
+network_online = False
 
 def launcher():
+    ih.led_warn.off()
+
     if HEIGHT == 448:
         y_offset = 20
     elif HEIGHT == 480:
@@ -30,13 +33,15 @@ def launcher():
     else:
         y_offset = 0
 
+    # Draw the menu
     graphics.set_pen(WHITE)
     graphics.clear()
 
-    graphics.set_pen(BLUE)
+    ## Title
+    graphics.set_pen(BLACK)
     graphics.rectangle(0, 0, WIDTH, 50)
     graphics.set_pen(WHITE)
-    title = "Gallery launcher"
+    title = "Inky Gallery"
     title_len = graphics.measure_text(title, 4) // 2
     graphics.text(title, (WIDTH // 2 - title_len), 10, WIDTH, 4)
 
@@ -59,6 +64,9 @@ def launcher():
     graphics.update()
     ih.led_warn.off()
 
+    # Now we've drawn the menu to the screen, we wait here for the user to select an app.
+    # Then once an app is selected, we set that as the current app and reset the device and load into it.
+
     while True:
         if ih.inky_frame.button_a.read():
             ih.inky_frame.button_a.led_on()
@@ -66,6 +74,9 @@ def launcher():
             time.sleep(0.5)
             reset()
         if ih.inky_frame.button_b.read():
+            if not network_online:
+                time.sleep(0.3)
+                continue
             ih.inky_frame.button_b.led_on()
             ih.update_state("gallery_online")
             time.sleep(0.5)
@@ -74,6 +85,15 @@ def launcher():
 
 ih.clear_button_leds()
 ih.led_warn.off()
+
+# Load WiFi credentials and attempt to connect
+try:
+    from gallery_config import WIFI_PASSWORD, WIFI_SSID
+
+    ih.network_connect(WIFI_SSID, WIFI_PASSWORD)
+    network_online = network.WLAN(network.STA_IF).status() == 3
+except ImportError:
+    print("Add WiFi credentials to gallery_config.py")
 
 if ih.inky_frame.button_a.read() and ih.inky_frame.button_e.read():
     launcher()
@@ -88,13 +108,6 @@ if ih.file_exists("state.json"):
     ih.app.HEIGHT = HEIGHT
 else:
     launcher()
-
-try:
-    from secrets import WIFI_PASSWORD, WIFI_SSID
-
-    ih.network_connect(WIFI_SSID, WIFI_PASSWORD)
-except ImportError:
-    print("Add WiFi credentials to secrets.py")
 
 gc.collect()
 
