@@ -25,7 +25,8 @@ launcher_quotes = []
 
 def launcher():
     ih.led_warn.off()
-
+    ih.clear_button_leds()
+    
     if HEIGHT == 448:
         y_offset = 20
     elif HEIGHT == 480:
@@ -90,12 +91,19 @@ def launcher():
     graphics.update()
     ih.led_warn.off()
 
+    # Activate LEDs
+    ih.inky_frame.button_a.led_on()
+    if network_online:
+        ih.inky_frame.button_b.led_on()
+    else:
+        ih.inky_frame.button_b.led_off()
+
     # Now we've drawn the menu to the screen, we wait here for the user to select an app.
     # Then once an app is selected, we set that as the current app and reset the device and load into it.
 
     while True:
         if ih.inky_frame.button_a.read():
-            ih.inky_frame.button_a.led_on()
+            ih.inky_frame.button_a.led_off()
             ih.update_state("gallery_offline")
             time.sleep(0.5)
             reset()
@@ -103,7 +111,7 @@ def launcher():
             if not network_online:
                 time.sleep(0.3)
                 continue
-            ih.inky_frame.button_b.led_on()
+            ih.inky_frame.button_b.led_off()
             ih.update_state("gallery_online")
             time.sleep(0.5)
             reset()
@@ -140,8 +148,6 @@ except ImportError:
 
 if ih.inky_frame.button_a.read() and ih.inky_frame.button_e.read():
     launcher()
-
-ih.clear_button_leds()
 
 if ih.file_exists("state.json"):
     ih.load_state()
