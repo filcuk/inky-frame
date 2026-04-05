@@ -59,6 +59,8 @@ When adding gallery apps, **either** follow this contract so they plug into the 
 ## References
 
 - Upstream submodule: [github.com/pimoroni/inky-frame](https://github.com/pimoroni/inky-frame)
+- **Inky Frame (MicroPython) — `inky_frame` module**: [docs/inky_frame.md](https://github.com/pimoroni/inky-frame/blob/main/docs/inky_frame.md) (buttons, LEDs, RTC/sleep, colours, JPEG caveats)
+- **PicoGraphics**: [micropython/modules/picographics/README.md](https://github.com/pimoroni/pimoroni-pico/blob/main/micropython/modules/picographics/README.md) (displays, pens, text, shapes, JPEG/PNG)
 - Firmware releases: [github.com/pimoroni/pimoroni-pico/releases](https://github.com/pimoroni/pimoroni-pico/releases)
 - Prior art for offline SD gallery: [github.com/tlstommy/PiInk](https://github.com/tlstommy/PiInk) (v1 in this repo is derived from that idea)
 
